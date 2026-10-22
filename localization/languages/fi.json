@@ -107,16 +107,16 @@
     "crashErrorSubtitle": "Sivun näyttämisessä on tapahtunut virhe.",
     "errorPagePrimaryAction": "Yritä uudelleen",
     "serverNotFoundTitle": "Palvelinta ei löydy",
-    "serverNotFoundSubtitle": "Min ei löytänyt tätä sivua.",
+    "serverNotFoundSubtitle": "Super Min ei löytänyt tätä sivua.",
     "archiveSearchAction": "Etsi sivustolta archive.org",
     "sslErrorTitle": "Sivusto ei ole saatavilla",
-    "sslErrorMessage": "Min ei voinut luoda suojattua yhteyttä sivustoon.",
+    "sslErrorMessage": "Super Min ei voinut luoda suojattua yhteyttä sivustoon.",
     "dnsErrorTitle": "Sivustoa ei löydy",
     "dnsErrorMessage": "DNS-virhe.",
     "offlineErrorTitle": "Verkkoyhteyttä ei löydy",
     "offlineErrorMessage": "Yhdistä verkkoon ja yritä uudelleen.",
-    "genericConnectionFail": "Min ei voinut yhdistää sivustoon.",
-    "sslTimeErrorMessage": "Min ei voinut luoda suojattua yhteyttä sivustoon. Varmista, että tietokoneesi kello on oikeassa ajassa.",
+    "genericConnectionFail": "Super Min ei voinut yhdistää sivustoon.",
+    "sslTimeErrorMessage": "Super Min ei voinut luoda suojattua yhteyttä sivustoon. Varmista, että tietokoneesi kello on oikeassa ajassa.",
     "addressInvalidTitle": "Osoite on virheellinen.",
     "genericError": "Tapahtui virhe",
     /* pages/phishing/index.html */
@@ -125,7 +125,7 @@
     "phishingErrorVisitAnyway": "Vieraile sivustolla silti",
     "phishingErrorLeave": "Poistu sivustolta",
     /* multiple instances alert */
-    "multipleInstancesErrorMessage": "Virhe. Sulje muut käynnissä olevat ikkunat ja käynnistä Min uudelleen.",
+    "multipleInstancesErrorMessage": "Virhe. Sulje muut käynnissä olevat ikkunat ja käynnistä Super Min uudelleen.",
     /* pages/sessionRestoreError/index.html */
     "sessionRestoreErrorTitle": "Tapahtui virhe",
     "sessionRestoreErrorExplanation": "Tallennettuja välilehtiä ei saatu palautettua.",
@@ -144,7 +144,7 @@
     "settingsBlockScriptsToggle": "Estä komentosarjat",
     "settingsBlockImagesToggle": "Estä kuvat",
     "settingsBlockedRequestCount": {
-      "unsafeHTML": "Tähän mennessä Min on estänyt <strong></strong> mainosta ja seurainta."
+      "unsafeHTML": "Tähän mennessä Super Min on estänyt <strong></strong> mainosta ja seurainta."
     },
     "settingsCustomBangs": null, // Missing translation
     "settingsCustomBangsAdd": null, // Missing translation
@@ -175,7 +175,7 @@
     "settingsUsageStatisticsToggle": {
       "unsafeHTML": "Lähetä käyttötilastoja (<a href=\"https://github.com/minbrowser/min/blob/master/docs/statistics.md\">Lisätiedot</a>)"
     },
-    "settingsStartupOptions": "Kun Min käynnistyy: ",
+    "settingsStartupOptions": "Kun Super Min käynnistyy: ",
     "settingsStartupCreateTask": "Avaa uudelleen edelliset välilehdet",
     "settingsStartupNewTaskandBackground": "Siirrä edelliset välilehdet tehtävään taustalle",
     "settingsStartupNewTaskOnly": "Avaa tyhjä tehtävä",

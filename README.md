@@ -1,16 +1,19 @@
-# Min
+<p align="center">
+  <img src="icons/source/super-min-logo-1024.png" width="128" alt="Super Min logo">
+</p>
 
-Min is a fast, minimal browser that protects your privacy. It includes an interface designed to minimize distractions, and features such as:
+# Super Min
 
-- Full-text search for visited pages
-- Ad and tracker blocking
-- Automatic reader view
-- Tasks (tab groups)
-- Bookmark tagging
-- Password manager integration
-- Dark theme
+Super Min is an edge-to-edge, minimal browser built on [Min](https://github.com/minbrowser/min). Pages fill the whole window; the address and tab bar, and the window buttons, appear only when your mouse reaches the top edge.
 
-Download Min from the [releases page](https://github.com/minbrowser/min/releases), or learn more on the [website](https://minbrowser.org/).
+- Edge-to-edge browsing with an auto-hiding Liquid Glass toolbar
+- Pinned tabs
+- No tasks: one simple row of tabs
+- Everything from Min: full-text history search, ad and tracker blocking, reader view, password manager integration, dark theme
+
+## About Min
+
+Super Min is a fork of Min, a fast, minimal browser that protects your privacy. Learn more about Min on its [website](https://minbrowser.org/).
 
 [![Downloads][DownloadsBadge]][DownloadsUrl]
 [![Discord][DiscordBadge]][DiscordUrl]

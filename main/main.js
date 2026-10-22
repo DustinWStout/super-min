@@ -26,7 +26,7 @@ crashReporter.start({
 })
 
 if (process.argv.some(arg => arg === '-v' || arg === '--version')) {
-  console.log('Min: ' + app.getVersion())
+  console.log('Super Min: ' + app.getVersion())
   console.log('Chromium: ' + process.versions.chrome)
   process.exit()
 }
@@ -59,6 +59,25 @@ if (process.platform === 'win32') {
 if (isDevelopmentMode) {
   app.setPath('userData', app.getPath('userData') + '-development')
 }
+
+// Super Min used to be called Min: copy its data (settings, tabs, history) the first time Super Min starts
+;(function migrateUserDataFromMin () {
+  const newPath = app.getPath('userData')
+  const oldPath = path.join(app.getPath('appData'), 'Min' + (isDevelopmentMode ? '-development' : ''))
+  const hasData = dir => fs.existsSync(path.join(dir, 'settings.json')) || fs.existsSync(path.join(dir, 'sessionRestore.json'))
+  if (oldPath === newPath || hasData(newPath) || !hasData(oldPath)) {
+    return
+  }
+  const skipped = ['Cache', 'Code Cache', 'GPUCache', 'DawnCache', 'DawnGraphiteCache', 'DawnWebGPUCache', 'Crashpad', 'SingletonLock', 'SingletonSocket', 'SingletonCookie']
+  try {
+    fs.cpSync(oldPath, newPath, {
+      recursive: true,
+      filter: src => !skipped.includes(path.basename(src))
+    })
+  } catch (e) {
+    console.warn('could not copy data from Min', e)
+  }
+})()
 
 // workaround for flicker when focusing app (https://github.com/electron/electron/issues/17942)
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows', 'true')
@@ -232,6 +251,11 @@ function createWindowWithBounds (bounds, customArgs) {
   // the browser UI can float over pages when the toolbar is revealed, so it needs to be see-through
   mainView.setBackgroundColor('#00000000')
   newWin.mainView = mainView
+
+  if (process.platform === 'darwin' && isDevelopmentMode) {
+    // packaged builds get the icon from the app bundle
+    app.dock.setIcon(path.join(__dirname, 'icons/source/super-min-logo-1024.png'))
+  }
 
   if (process.platform === 'darwin' && !settings.get('useSeparateTitlebar')) {
     // window buttons are shown together with the toolbar

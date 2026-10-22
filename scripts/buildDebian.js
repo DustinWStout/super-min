@@ -6,14 +6,14 @@ const createPackage = require('./createPackage.js')
 
 async function afterPackageBuilt (path, arch) {
   var installerOptions = {
-    artifactName: 'min-${version}-${arch}.deb',
+    artifactName: 'super-min-${version}-${arch}.deb',
     packageName: 'min',
     icon: 'icons/icon256.png',
     category: 'Network;WebBrowser',
     packageCategory: 'Network',
     mimeTypes: ['x-scheme-handler/http', 'x-scheme-handler/https', 'text/html'],
     maintainer: 'Min Developers <280953907a@zoho.com>',
-    description: 'Min is a fast, minimal browser that protects your privacy.',
+    description: 'Super Min is an edge-to-edge, minimal browser built on Min.',
     synopsis: 'A web browser with smarter search, improved tab management, and built-in ad blocking. Includes full-text history search, instant answers from DuckDuckGo, the ability to split tabs into groups, and more.',
     depends: [
       'libsecret-1-0',

@@ -16,7 +16,9 @@ function getUpdateRandomNum () {
 }
 
 function getAvailableUpdates () {
-  if (settings.get('updateNotificationsEnabled') !== false) {
+  // super-min: the update feed is for Min, so it would offer to replace Super Min with Min
+  const hasUpdateFeed = false
+  if (hasUpdateFeed && settings.get('updateNotificationsEnabled') !== false) {
     console.info('checking for updates')
     fetch(UPDATE_URL, {
       cache: 'no-cache'

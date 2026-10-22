@@ -25,11 +25,11 @@ async function afterPackageBuilt (packagePath) {
   }
 
   /* create zip files */
-  var output = fs.createWriteStream('dist/app/' + 'Min-v' + version + '-windows' + archSuffix + '.zip')
+  var output = fs.createWriteStream('dist/app/' + 'Super-Min-v' + version + '-windows' + archSuffix + '.zip')
   var archive = archiver('zip', {
     zlib: { level: 9 }
   })
-  archive.directory(packagePath, 'Min-v' + version)
+  archive.directory(packagePath, 'Super-Min-v' + version)
   archive.pipe(output)
   await archive.finalize()
 

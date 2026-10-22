@@ -123,7 +123,8 @@
         ></label>
       </div>
 
-      <div class="setting-section">
+      <!-- super-min: tabs have no dividers -->
+      <div class="setting-section" hidden>
         <input type="checkbox" id="checkbox-show-divider" />
         <label
           for="checkbox-show-divider"
@@ -140,7 +141,8 @@
     <div class="settings-container" id="additional-settings-container">
       <h3 data-string="settingsAdditionalFeaturesHeading"></h3>
 
-      <div class="setting-section">
+      <!-- super-min: tasks are gone, and previous tabs are always restored -->
+      <div class="setting-section" hidden>
         <label for="startupOptions" data-string="settingsStartupOptions"></label>
         <select id="startup-options" name="startupOptions">
           <option value="1" data-string="settingsStartupCreateTask"></option>
@@ -151,7 +153,7 @@
         </select>
       </div>
 
-      <div class="setting-section">
+      <div class="setting-section" hidden>
         <label for="newWindowOptions" data-string="settingsNewWindowOptions"></label>
         <select id="new-window-options" name="newWindowOptions">
           <option value="1" data-string="settingsNewWindowCreateTask"></option>

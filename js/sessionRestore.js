@@ -62,7 +62,6 @@ const sessionRestore = {
       console.warn('failed to read session restore data', e)
     }
 
-    var startupConfigOption = settings.get('startupTabOption') || 2
     /*
     1 - reopen last task
     2 - open new task, keep old tabs in background
@@ -124,23 +123,21 @@ const sessionRestore = {
         tasks.setSelected(mostRecentTasks[0].id)
       }
 
-      // switch to the previously selected tasks
+      // super-min has no tasks: keep every restored tab together in the most recent task
+      var mainTask = tasks.get(mostRecentTasks[0].id)
+      mostRecentTasks.slice(1).forEach(function (task) {
+        task.tabs.get().forEach(function (tab) {
+          if (tab.url) {
+            mainTask.tabs.add(Object.assign({}, tab, { selected: false }), { atEnd: true }, false)
+          }
+        })
+        tasks.destroy(task.id, false)
+      })
 
-      if (tasks.getSelected().tabs.isEmpty() || startupConfigOption === 1) {
-        browserUI.switchToTask(mostRecentTasks[0].id)
-        if (tasks.getSelected().tabs.isEmpty()) {
-          tabEditor.show(tasks.getSelected().tabs.getSelected())
-        }
-      } else {
-        window.createdNewTaskOnStartup = true
-        // try to reuse a previous empty task
-        var lastTask = tasks.byIndex(tasks.getLength() - 1)
-        if (lastTask && lastTask.tabs.isEmpty() && !lastTask.name) {
-          browserUI.switchToTask(lastTask.id)
-          tabEditor.show(lastTask.tabs.getSelected())
-        } else {
-          browserUI.addTask()
-        }
+      // continue where you left off
+      browserUI.switchToTask(mainTask.id)
+      if (mainTask.tabs.isEmpty()) {
+        tabEditor.show(mainTask.tabs.getSelected())
       }
 
       /* Disabled - show user survey

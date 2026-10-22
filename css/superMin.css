@@ -1,0 +1,794 @@
+/*
+super-min design layer
+Loaded after every other stylesheet. Pages fill the window and the toolbar floats over them when revealed
+(see js/toolbarReveal.js).
+*/
+
+body {
+  --bar-height: calc(44px + var(--control-space-top));
+  --bar-control-height: 30px;
+  --radius-control: 9px;
+  --radius-panel: 14px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --hairline: color-mix(in srgb, currentColor 9%, transparent);
+  --fill-subtle: color-mix(in srgb, currentColor 5.5%, transparent);
+  --fill: color-mix(in srgb, currentColor 9%, transparent);
+  --fill-strong: color-mix(in srgb, currentColor 14%, transparent);
+  --panel-shadow:
+    0 0 0 0.5px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06),
+    0 24px 64px -16px rgba(0, 0, 0, 0.32);
+}
+
+body.dark-mode {
+  --panel-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 24px 64px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* neutral surfaces that match the toolbar */
+
+html,
+body {
+  background-color: rgb(250, 250, 251);
+  color: rgb(29, 29, 31);
+}
+
+html:has(body.dark-mode),
+body.dark-mode {
+  background-color: rgb(30, 30, 33);
+  color: rgb(242, 242, 244);
+}
+
+/* typography */
+
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.mac * {
+  letter-spacing: normal;
+}
+
+body.mac:not(.fullscreen):not(.separate-titlebar) {
+  --control-space-left: 80px;
+}
+
+/* the UI becomes see-through while the toolbar floats over a page */
+
+html:has(body.toolbar-overlay),
+body.toolbar-overlay {
+  background: transparent !important;
+}
+
+body.toolbar-overlay #webviews,
+body.toolbar-overlay #overlay {
+  visibility: hidden;
+}
+
+/* pages fill the window */
+
+#webviews {
+  position: fixed;
+  inset: 0;
+  height: auto;
+}
+
+/* tasks are not part of super-min */
+
+#switch-task-button,
+#task-overlay {
+  display: none !important;
+}
+
+/* toolbar */
+
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--bar-height);
+  align-items: center;
+  gap: 2px;
+  padding-right: calc(var(--control-space-right) + 8px);
+  z-index: 20;
+  background-color: var(--theme-background-color, #fff);
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.17s var(--ease-in),
+    opacity 0.17s var(--ease-in),
+    box-shadow 0.17s,
+    background-color 0.3s,
+    color 0.3s;
+}
+
+body.toolbar-shown #navbar {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
+  transition:
+    transform 0.28s var(--ease-out),
+    opacity 0.2s var(--ease-out),
+    box-shadow 0.28s,
+    background-color 0.3s,
+    color 0.3s;
+}
+
+/* floating over a page */
+body.toolbar-overlay.toolbar-shown #navbar {
+  box-shadow:
+    0 0.5px 0 rgba(0, 0, 0, 0.08),
+    0 12px 32px -12px rgba(0, 0, 0, 0.3);
+}
+
+#navbar:before,
+.dark-theme #navbar:before,
+#navbar.show-dividers:before {
+  background: var(--hairline);
+  height: 0.5px;
+}
+
+body.toolbar-overlay #navbar:before {
+  display: none;
+}
+
+/* window controls follow the toolbar on Windows and Linux too */
+
+.windows-caption-buttons,
+#linux-control-buttons {
+  transition: opacity 0.2s;
+}
+
+body:not(.toolbar-shown) .windows-caption-buttons,
+body:not(.toolbar-shown) #linux-control-buttons {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* toolbar buttons */
+
+.navbar-action-button {
+  width: var(--bar-control-height);
+  height: var(--bar-control-height);
+  margin: 0;
+  padding: 0;
+  border-radius: var(--radius-control);
+  font-size: 17px !important;
+  opacity: 0.62;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s, opacity 0.15s;
+}
+
+.navbar-action-button + .navbar-action-button {
+  padding-left: 0;
+}
+
+.navbar-action-button:not(:disabled):hover,
+body.windows .navbar-action-button:not(:disabled):hover,
+body.windows.dark-theme .navbar-action-button:not(:disabled):hover {
+  background-color: var(--fill);
+  opacity: 1;
+}
+
+.navbar-action-button:not(:disabled):active {
+  background-color: var(--fill-strong);
+}
+
+#menu-button {
+  width: var(--bar-control-height);
+  margin-left: 6px;
+}
+
+#toolbar-navigation-buttons,
+#toolbar-navigation-buttons.can-go-forward:hover {
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 6px;
+  overflow: visible;
+}
+
+#back-button,
+#forward-button {
+  width: var(--bar-control-height);
+  margin: 0;
+}
+
+#back-button:disabled,
+#forward-button:disabled {
+  opacity: 0.18;
+}
+
+#toolbar-navigation-buttons:not(.can-go-forward) #forward-button {
+  display: none;
+}
+
+.navbar-right-actions {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0 6px;
+}
+
+.navbar-right-actions #add-tab-button {
+  width: var(--bar-control-height);
+  font-size: 18px !important;
+}
+
+/* tabs */
+
+#navbar #tabs {
+  height: 100%;
+  align-items: center;
+  overflow: visible;
+}
+
+#tabs #tabs-inner {
+  height: 100%;
+  align-items: center;
+  gap: 3px;
+  padding: 0 2px;
+}
+
+#tabs #tabs-inner::-webkit-scrollbar {
+  height: 0;
+}
+
+.tab-item {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 260px;
+  height: var(--bar-control-height);
+  line-height: var(--bar-control-height);
+  padding: 0 8px 0 11px;
+  gap: 4px;
+  border-radius: var(--radius-control);
+  opacity: 0.6;
+  transition:
+    background-color 0.15s,
+    opacity 0.15s,
+    transform 0.2s var(--ease-out),
+    max-width 0.25s var(--ease-out);
+}
+
+.tab-item.active {
+  min-width: 0;
+  max-width: 340px;
+  opacity: 1;
+}
+
+.tab-item.active,
+.tab-item.active:not(:only-child),
+.dark-theme .tab-item.active:not(:only-child),
+.dark-theme.theme-background-low-contrast .tab-item.active:not(:only-child) {
+  background: var(--fill);
+}
+
+.tab-item:not(.active):hover,
+.dark-theme .tab-item:not(.active):hover,
+.dark-theme.theme-background-low-contrast .tab-item:not(.active):hover {
+  background-color: var(--fill-subtle);
+  opacity: 0.9;
+}
+
+.tab-item.fade {
+  opacity: 0.4;
+}
+
+#navbar.show-dividers .tab-item:not(:last-child),
+.dark-theme #navbar.show-dividers .tab-item:not(:last-child) {
+  border-right: none;
+}
+
+.tab-item .title-container {
+  padding: 0;
+}
+
+.tab-item .title,
+.compact-tabs .tab-item .title {
+  font-size: 13px;
+  font-weight: 450;
+  transform-origin: left center;
+  transition: transform 0.2s var(--ease-out), opacity 0.2s;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-item.active .title {
+  font-weight: 500;
+}
+
+.tab-item .url-element {
+  top: 0;
+  line-height: var(--bar-control-height);
+  font-size: 11px;
+  opacity: 0;
+  transform: translateY(6px);
+  transform-origin: left center;
+  transition: transform 0.2s var(--ease-out), opacity 0.2s;
+}
+
+/* hovering the current tab shows its domain under the title */
+.tab-item.active.has-url:hover .title,
+.compact-tabs .tab-item.active.has-url:hover .title {
+  transform: translateY(-6px) scale(0.86);
+  opacity: 1;
+}
+
+.tab-item.active.has-url:hover .url-element {
+  transform: translateY(7px);
+  opacity: 0.55;
+}
+
+.tab-item .tab-icon {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.tab-item .tab-close-button {
+  font-size: 14px;
+  width: 18px;
+  height: 18px;
+  margin: auto 0;
+  border-radius: 6px;
+}
+
+.tab-item .tab-icon:not(.permission-request-icon):hover:after,
+.dark-theme .tab-item .tab-icon:hover:after {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--fill-strong);
+}
+
+.tab-item .tab-icon.permission-request-icon {
+  height: 20px;
+  border-radius: 6px;
+  border-color: var(--fill-strong);
+}
+
+.tab-item.gu-mirror {
+  height: var(--bar-control-height) !important;
+  line-height: var(--bar-control-height) !important;
+  border-radius: var(--radius-control);
+  box-shadow: var(--panel-shadow);
+}
+
+/* the loading indicator runs along the bottom of the tab */
+.progress-bar-container {
+  top: auto;
+  bottom: 3px;
+  left: 11px;
+  width: calc(100% - 22px);
+  border-radius: 2px;
+}
+
+.progress-bar {
+  border-radius: 2px;
+}
+
+body:not(.dark-theme) .progress-bar {
+  opacity: 0.5;
+}
+
+/* address field: a centered field in the toolbar, with results in a panel below it */
+
+body {
+  --address-width: min(680px, calc(100vw - 2 * var(--control-space-left) - 24px));
+}
+
+#tab-editor {
+  position: fixed;
+  top: calc(var(--control-space-top) + (44px - 34px) / 2);
+  left: 50%;
+  width: var(--address-width);
+  height: 34px;
+  padding: 0 6px 0 14px;
+  gap: 2px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  background: var(--fill);
+  box-shadow: inset 0 0 0 0.5px var(--hairline);
+  animation: sm-field-in 0.22s var(--ease-out);
+}
+
+@keyframes sm-field-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.97);
+  }
+}
+
+#tab-editor-input {
+  font-size: 14px;
+  height: 100%;
+  line-height: 34px;
+}
+
+#tab-editor-input::selection {
+  background: color-mix(in srgb, #0a84ff 30%, transparent);
+}
+
+#tab-editor-input::-webkit-input-placeholder {
+  opacity: 0.4;
+  line-height: 34px;
+}
+
+#tab-editor .tab-editor-button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  margin: 0;
+  border-radius: 7px;
+  font-size: 15px;
+  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, opacity 0.15s;
+}
+
+#tab-editor .tab-editor-button:hover,
+.dark-theme #tab-editor .tab-editor-button:hover {
+  background-color: var(--fill);
+  opacity: 1;
+}
+
+#tab-editor .tab-editor-button:not([hidden]) + .tab-editor-button:not([hidden]) {
+  margin-left: 0;
+}
+
+/* the navigation buttons and tabs step aside while editing */
+.is-edit-mode .tab-item {
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+body.is-edit-mode .navbar-right-actions {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#searchbar {
+  position: fixed;
+  top: calc(var(--bar-height) - 2px);
+  left: 50%;
+  width: var(--address-width);
+  max-height: min(600px, calc(100vh - var(--bar-height) - 32px));
+  padding: 6px;
+  transform: translateX(-50%);
+  border-radius: var(--radius-panel);
+  background-color: var(--theme-background-color, #fff);
+  box-shadow: var(--panel-shadow);
+  animation: sm-panel-in 0.24s var(--ease-out);
+  scrollbar-width: none;
+}
+
+body:not(.is-ntp) #searchbar,
+body.ntp-has-background #searchbar,
+body.windows #searchbar,
+body.linux #searchbar {
+  padding: 6px;
+  box-shadow: var(--panel-shadow);
+}
+
+#searchbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* nothing to show yet */
+#searchbar:not(:has(.searchbar-item, .searchbar-heading)) {
+  visibility: hidden;
+}
+
+@keyframes sm-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.985);
+  }
+}
+
+.searchbar-heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em !important;
+  opacity: 0.45;
+  padding: 12px 12px 6px 12px;
+}
+
+.searchbar-plugin-container:first-child .searchbar-heading {
+  padding-top: 6px;
+}
+
+#searchbar .searchbar-item {
+  font-size: 14px;
+  padding: 8px 12px 8px 38px;
+  border-radius: 9px;
+  transition: background-color 0.1s;
+}
+
+#searchbar .searchbar-item.placeholder {
+  height: 36px;
+}
+
+#searchbar .searchbar-item:hover {
+  background-color: var(--fill-subtle);
+}
+
+#searchbar .searchbar-item:focus,
+#searchbar .searchbar-item.fakefocus {
+  background-color: var(--fill);
+}
+
+#searchbar .searchbar-item .title {
+  font-size: 14px;
+  font-weight: 450;
+}
+
+#searchbar .searchbar-item .secondary-text {
+  font-size: 13px;
+  opacity: 0.5;
+  padding-left: 0.75em;
+}
+
+#searchbar .searchbar-item .description-block {
+  font-size: 12.5px;
+  line-height: 1.4;
+  max-height: 2.8em;
+  opacity: 0.6;
+}
+
+#searchbar .searchbar-item > i,
+#searchbar .searchbar-item .icon-image,
+.fullscreen #searchbar .searchbar-item i,
+body:not(.mac) #searchbar .searchbar-item i,
+.fullscreen #searchbar .searchbar-item .icon-image,
+body:not(.mac) #searchbar .searchbar-item .icon-image {
+  top: 50%;
+  left: 13px;
+  right: auto;
+  margin-top: -8px;
+  width: 16px;
+  height: 16px;
+  font-size: 15px;
+  opacity: 0.4;
+}
+
+#searchbar .searchbar-item .icon-image {
+  opacity: 1;
+  border-radius: 4px;
+}
+
+#searchbar .searchbar-item.has-action-button:hover i,
+#searchbar .searchbar-item.has-action-button:hover .icon-image {
+  display: block;
+}
+
+#searchbar .searchbar-item .action-button {
+  top: 50%;
+  margin-top: -13px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-size: 15px;
+}
+
+#searchbar .searchbar-item .action-button:hover,
+#searchbar .searchbar-item .action-button:focus {
+  background: var(--fill);
+}
+
+.searchbar-item .text-action-button-row button {
+  border: none;
+  background: var(--fill-subtle);
+  border-radius: 7px;
+  padding: 4px 9px;
+  font-size: 13px;
+}
+
+.searchbar-shortcut {
+  font-size: 13px !important;
+  padding: 6px 11px;
+  margin: 2px 4px 6px 4px;
+  border: none;
+  border-radius: 8px;
+  background: var(--fill-subtle);
+}
+
+.dark-theme .searchbar-shortcut {
+  border-color: transparent;
+}
+
+.searchbar-shortcut:hover,
+.searchbar-shortcut:focus,
+.dark-theme .searchbar-shortcut:hover,
+.dark-theme .searchbar-shortcut:focus {
+  background: var(--fill);
+}
+
+.searchbar-floating-button {
+  top: 6px;
+  right: 8px;
+  border: none;
+  border-radius: 7px;
+  background: var(--fill-subtle);
+  font-size: 12px;
+  padding: 4px 9px;
+}
+
+/* backdrop while editing: the page (or new tab page) softens behind the address field */
+
+body.is-edit-mode #overlay {
+  background: rgba(250, 250, 252, 0.45);
+  animation: sm-fade-in 0.25s var(--ease-out);
+}
+
+body.dark-mode.is-edit-mode #overlay {
+  background: rgba(10, 10, 12, 0.45);
+}
+
+body.is-modal-mode #overlay {
+  background: rgba(0, 0, 0, 0.2);
+  animation: sm-fade-in 0.25s var(--ease-out);
+}
+
+@keyframes sm-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+#webview-placeholder {
+  transform: scale(1.02);
+}
+
+/* new tab page */
+
+body.is-ntp:not(.ntp-has-background) #ntp-content {
+  background:
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, currentColor 4%, transparent), transparent 70%);
+}
+
+#ntp-background-controls button,
+.dark-mode #ntp-background-controls button {
+  border: none;
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(12px);
+}
+
+/* find in page: a field on the right side of the toolbar */
+
+#findinpage-bar {
+  top: calc(var(--control-space-top) + (44px - 34px) / 2);
+  left: auto;
+  right: calc(var(--control-space-right) + 8px);
+  width: min(380px, 50vw);
+  height: 34px;
+  padding: 0 4px 0 12px;
+  gap: 2px;
+  border-radius: 10px;
+  background-color: var(--theme-background-color, #fff);
+  box-shadow: var(--panel-shadow);
+  z-index: 30;
+  animation: sm-field-in-right 0.22s var(--ease-out);
+}
+
+body.windows #findinpage-bar,
+body.linux #findinpage-bar {
+  left: auto;
+}
+
+@keyframes sm-field-in-right {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+#findinpage-bar #findinpage-input {
+  font-size: 14px;
+}
+
+#findinpage-bar .inline-text {
+  font-size: 12px;
+  opacity: 0.5;
+  padding: 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+#findinpage-bar .divider {
+  width: 0.5px;
+  height: 16px;
+  margin: 0 4px;
+  background: var(--hairline);
+}
+
+#findinpage-bar button {
+  margin: 0;
+  padding: 0;
+}
+
+#findinpage-bar .navbar-action-button {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-size: 15px !important;
+}
+
+/* downloads */
+
+#download-bar,
+.dark-mode #download-bar {
+  border-top: 0.5px solid var(--hairline);
+  padding: 0 6px;
+  align-items: center;
+}
+
+.download-item {
+  border-right: none !important;
+  border-radius: 9px;
+  margin: 4px 2px;
+  height: calc(100% - 8px);
+}
+
+#download-close-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+/* password capture appears at the top of the page */
+
+#password-capture-bar {
+  top: 0;
+  border-bottom: 0.5px solid var(--hairline);
+}
+
+body.toolbar-pushes-page #password-capture-bar {
+  top: var(--bar-height);
+}
+
+#password-capture-save {
+  border-radius: 8px;
+  background: #0a84ff;
+}
+
+/* dialogs */
+
+.modal {
+  border-radius: 16px;
+  box-shadow: var(--panel-shadow);
+  padding: 1.25em 1.5em;
+  animation: sm-modal-in 0.28s var(--ease-out);
+}
+
+@keyframes sm-modal-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+}
+
+/* thin scrollbars */
+
+.has-thin-scrollbar::-webkit-scrollbar-track,
+.dark-theme .has-thin-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.has-thin-scrollbar::-webkit-scrollbar-thumb,
+.dark-theme .has-thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--fill-strong);
+}

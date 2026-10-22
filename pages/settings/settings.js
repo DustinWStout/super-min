@@ -220,7 +220,7 @@ darkModeSystem.addEventListener('change', function (e) {
 /* site theme setting */
 
 settings.get('siteTheme', function (value) {
-  if (value === true || value === undefined) {
+  if (value === true) {
     siteThemeCheckbox.checked = true
   } else {
     siteThemeCheckbox.checked = false

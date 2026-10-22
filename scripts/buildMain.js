@@ -15,6 +15,7 @@ const modules = [
   'main/minInternalProtocol.js',
   'main/filtering.js',
   'main/viewManager.js',
+  'main/toolbarReveal.js',
   'main/download.js',
   'main/UASwitcher.js',
   'main/permissionManager.js',

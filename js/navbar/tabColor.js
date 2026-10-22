@@ -10,8 +10,8 @@ const textColorNN = require('ext/textColor/textColor.js')
 
 const defaultColors = {
   private: ['rgb(58, 44, 99)', 'white'],
-  lightMode: ['rgb(255, 255, 255)', 'black'],
-  darkMode: ['rgb(33, 37, 43)', 'white']
+  lightMode: ['rgb(250, 250, 251)', 'rgb(29, 29, 31)'],
+  darkMode: ['rgb(30, 30, 33)', 'rgb(242, 242, 244)']
 }
 
 function getHours () {
@@ -181,7 +181,7 @@ function setColor (bg, fg, isLowContrast) {
 }
 
 const tabColor = {
-  useSiteTheme: true,
+  useSiteTheme: false,
   initialize: function () {
     webviews.bindEvent('page-favicon-updated', function (tabId, favicons) {
       tabColor.updateFromImage(favicons, tabId, function () {

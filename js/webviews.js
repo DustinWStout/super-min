@@ -158,11 +158,8 @@ const webviews = {
         height: window.innerHeight
       }
     } else {
-      if (!hasSeparateTitlebar && (window.platformType === 'linux' || window.platformType === 'windows') && !windowIsMaximized && !windowIsFullscreen) {
-        var navbarHeight = 48
-      } else {
-        var navbarHeight = 36
-      }
+      // pages fill the window; the toolbar floats over them, except during find in page
+      var navbarHeight = document.body.classList.contains('toolbar-pushes-page') ? document.getElementById('navbar').offsetHeight : 0
 
       const viewMargins = webviews.viewMargins
 

@@ -198,7 +198,7 @@ function createWindowWithBounds (bounds, customArgs) {
     minWidth: (process.platform === 'win32' ? 400 : 320), // controls take up more horizontal space on Windows
     minHeight: 350,
     titleBarStyle: settings.get('useSeparateTitlebar') ? 'default' : 'hidden',
-    trafficLightPosition: { x: 12, y: 10 },
+    trafficLightPosition: { x: 16, y: 15 },
     icon: __dirname + '/icons/icon256.png',
     frame: settings.get('useSeparateTitlebar'),
     alwaysOnTop: settings.get('windowAlwaysOnTop'),
@@ -229,6 +229,14 @@ function createWindowWithBounds (bounds, customArgs) {
     }
   })
   mainView.webContents.loadURL(browserPage)
+  // the browser UI can float over pages when the toolbar is revealed, so it needs to be see-through
+  mainView.setBackgroundColor('#00000000')
+  newWin.mainView = mainView
+
+  if (process.platform === 'darwin' && !settings.get('useSeparateTitlebar')) {
+    // window buttons are shown together with the toolbar
+    newWin.setWindowButtonVisibility(false)
+  }
 
   if (bounds.maximized) {
     newWin.maximize()
@@ -521,7 +529,7 @@ ipc.on('places-connect', function (e) {
 })
 
 function getWindowWebContents (win) {
-  return win.getContentView().children[0].webContents
+  return win.mainView.webContents
 }
 
 /* translate service */

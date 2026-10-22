@@ -271,9 +271,13 @@ function setView (id, senderContents) {
   // see https://github.com/minbrowser/min/issues/1966
   if (windows.getState(win).selectedView !== viewMap[id]) {
     //remove all prior views
-    win.getContentView().children.slice(1).forEach(child => win.getContentView().removeChildView(child))
+    win.getContentView().children.filter(child => child !== win.mainView).forEach(child => win.getContentView().removeChildView(child))
     if (viewStateMap[id].loadedInitialURL) {
       win.getContentView().addChildView(viewMap[id])
+      if (windows.getState(win).toolbarOverlay) {
+        // keep the revealed toolbar above the page
+        win.getContentView().addChildView(win.mainView)
+      }
     } else {
       win.getContentView().removeChildView(viewMap[id])
     }

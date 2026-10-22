@@ -134,6 +134,8 @@ const sessionRestore = {
         tasks.destroy(task.id, false)
       })
 
+      mainTask.tabs.normalizePinnedOrder()
+
       // continue where you left off
       browserUI.switchToTask(mainTask.id)
       if (mainTask.tabs.isEmpty()) {

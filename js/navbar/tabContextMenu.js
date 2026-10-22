@@ -3,10 +3,21 @@ const browserUI = require('browserUI.js')
 const webviews = require('webviews.js')
 const readerView = require('readerView.js')
 const urlParser = require('util/urlParser.js')
+const tabBar = require('navbar/tabBar.js')
 
 const tabContextMenu = {
   show: function (tabId) {
+    const isPinned = tabs.get(tabId).pinned
     const tabMenu = [
+      [
+        {
+          label: isPinned ? l('tabMenuUnpin') : l('tabMenuPin'),
+          click: function () {
+            tabs.setPinned(tabId, !isPinned)
+            tabBar.updateAll()
+          }
+        }
+      ],
       [
         {
           label: l('appMenuDuplicateTab'),
@@ -43,14 +54,14 @@ const tabContextMenu = {
 
     if (tabs.get(tabId).url && (readerView.isReader(tabId) || !urlParser.isInternalURL(tabs.get(tabId).url))) {
       if (!readerView.isReader(tabId)) {
-        tabMenu[0].push({
+        tabMenu[1].push({
           label: l('enterReaderView'),
           click: function () {
             readerView.enter(tabId, tabs.get(tabId).url)
           }
         })
       } else {
-        tabMenu[0].push({
+        tabMenu[1].push({
           label: l('exitReaderView'),
           click: function () {
             readerView.exit(tabId)
@@ -59,7 +70,7 @@ const tabContextMenu = {
       }
     }
 
-    tabMenu[0].push( {
+    tabMenu[1].push( {
       label: l('tabMenuReload'),
       click: function () {
         if (tabs.get(tabId).url.startsWith(webviews.internalPages.error)) {

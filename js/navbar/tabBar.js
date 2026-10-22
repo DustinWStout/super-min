@@ -77,6 +77,21 @@ const tabBar = {
 
     tabEl.appendChild(iconArea)
 
+    // pinned tabs show only the site's icon
+
+    var favicon = document.createElement('span')
+    favicon.className = 'tab-favicon'
+    favicon.setAttribute('aria-hidden', 'true')
+    var faviconImage = document.createElement('img')
+    faviconImage.addEventListener('error', function () {
+      favicon.classList.remove('has-image')
+    })
+    faviconImage.addEventListener('load', function () {
+      favicon.classList.add('has-image')
+    })
+    favicon.appendChild(faviconImage)
+    tabEl.appendChild(favicon)
+
     // title
 
     var titleContainer = document.createElement('div')
@@ -113,6 +128,9 @@ const tabBar = {
     tabEl.addEventListener('wheel', function (e) {
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) {
         // https://github.com/minbrowser/min/issues/698
+        return
+      }
+      if (tabs.get(data.id).pinned) {
         return
       }
       if (e.deltaY > 65 && e.deltaX < 10 && Date.now() - lastTabDeletion > 900) { // swipe up to delete tabs
@@ -172,6 +190,20 @@ const tabBar = {
       tabEl.classList.add('has-url')
     } else {
       tabEl.classList.remove('has-url')
+    }
+
+    // pinned state and icon
+    tabEl.classList.toggle('pinned', !!tabData.pinned)
+
+    var favicon = tabEl.querySelector('.tab-favicon')
+    var faviconImage = favicon.querySelector('img')
+    favicon.setAttribute('data-letter', (tabUrl || tabTitle).replace(/^www\./, '').charAt(0).toUpperCase())
+    var faviconURL = tabData.favicon && tabData.favicon.url
+    if (faviconURL && faviconImage.getAttribute('src') !== faviconURL) {
+      faviconImage.src = faviconURL
+    } else if (!faviconURL) {
+      faviconImage.removeAttribute('src')
+      favicon.classList.remove('has-image')
     }
 
     // update tab audio icon
@@ -260,6 +292,11 @@ const tabBar = {
       }
 
       tabs.splice(newIdx, 0, oldTab)
+
+      // a tab dropped across the boundary goes back to its own group
+      if (tabs.normalizePinnedOrder()) {
+        tabBar.updateAll()
+      }
     })
   },
   handleSizeChange: function () {
@@ -290,7 +327,7 @@ webviews.bindEvent('did-stop-loading', function (tabId) {
 })
 
 tasks.on('tab-updated', function (id, key) {
-  var updateKeys = ['title', 'secure', 'url', 'muted', 'hasAudio']
+  var updateKeys = ['title', 'secure', 'url', 'muted', 'hasAudio', 'pinned', 'favicon']
   if (updateKeys.includes(key)) {
     tabBar.updateTab(id)
   }

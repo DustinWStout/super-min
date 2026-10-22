@@ -29,12 +29,16 @@ class TabList {
       previewImage: '',
       isFileView: false,
       hasWebContents: false,
+      pinned: tab.pinned || false,
+      favicon: tab.favicon
     }
 
     if (options.atEnd) {
       this.tabs.push(newTab)
     } else {
-      this.tabs.splice(this.getSelectedIndex() + 1, 0, newTab)
+      // pinned tabs stay together at the start
+      const index = Math.max(this.getSelectedIndex() + 1, newTab.pinned ? 0 : this.countPinned())
+      this.tabs.splice(Math.min(index, newTab.pinned ? this.countPinned() : this.tabs.length), 0, newTab)
     }
 
     if (emit) {
@@ -158,7 +162,8 @@ class TabList {
     var currentIndex = this.getIndex(id)
     var newIndex = currentIndex + offset
     var newIndexTab = this.getAtIndex(newIndex)
-    if (newIndexTab) {
+    // tabs can't move between the pinned and unpinned groups
+    if (newIndexTab && newIndexTab.pinned === this.getAtIndex(currentIndex).pinned) {
       var currentTab = this.getAtIndex(currentIndex)
       this.splice(currentIndex, 1, newIndexTab)
       this.splice(newIndex, 1, currentTab)
@@ -168,6 +173,31 @@ class TabList {
 
   count () {
     return this.tabs.length
+  }
+
+  countPinned () {
+    return this.tabs.filter(tab => tab.pinned).length
+  }
+
+  setPinned (id, pinned) {
+    const index = this.getIndex(id)
+    if (index < 0 || !!this.tabs[index].pinned === pinned) {
+      return
+    }
+    // move the tab to the edge of the pinned group
+    const tab = this.tabs.splice(index, 1)[0]
+    this.tabs.splice(this.countPinned(), 0, tab)
+    this.update(id, { pinned })
+  }
+
+  // keeps pinned tabs ahead of unpinned ones, returns whether anything moved
+  normalizePinnedOrder () {
+    const ordered = this.tabs.filter(tab => tab.pinned).concat(this.tabs.filter(tab => !tab.pinned))
+    const changed = ordered.some((tab, i) => tab !== this.tabs[i])
+    if (changed) {
+      this.tabs.splice(0, this.tabs.length, ...ordered)
+    }
+    return changed
   }
 
   isEmpty () {

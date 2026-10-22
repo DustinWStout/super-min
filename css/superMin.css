@@ -959,3 +959,97 @@ body.linux #searchbar,
   backdrop-filter: var(--glass-blur);
   box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.3);
 }
+
+/* pinned tabs: compact capsules with the site's icon, grouped at the start */
+
+.tab-favicon {
+  display: none;
+}
+
+.tab-item.pinned {
+  flex: 0 0 auto;
+  width: 36px;
+  min-width: 36px;
+  max-width: 36px;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.8;
+}
+
+.tab-item.pinned.active {
+  opacity: 1;
+}
+
+.tab-item.pinned .tab-favicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tab-item.pinned .tab-favicon img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  display: none;
+}
+
+.tab-item.pinned .tab-favicon.has-image img {
+  display: block;
+}
+
+/* without an icon, show the site's first letter */
+.tab-item.pinned .tab-favicon:not(.has-image) {
+  background: var(--fill-strong);
+}
+
+.tab-item.pinned .tab-favicon:not(.has-image):before {
+  content: attr(data-letter);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.tab-item.pinned .title-container,
+.tab-item.pinned .tab-icon-area,
+.tab-item.pinned .reader-button,
+.tab-item.pinned .permission-request-icon:not(.active) {
+  display: none !important;
+}
+
+.tab-item.pinned .tab-audio-button:not([hidden]) {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  font-size: 9px !important;
+}
+
+.tab-item.pinned .progress-bar-container {
+  left: 9px;
+  width: 18px;
+}
+
+/* a quiet divider between pinned and regular tabs */
+.tab-item.pinned + .tab-item:not(.pinned) {
+  margin-left: 7px;
+}
+
+.tab-item.pinned + .tab-item:not(.pinned):before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  border-radius: 1px;
+  background: var(--fill-strong);
+}
+
+.tab-item.pinned + .tab-item:not(.pinned) {
+  overflow: visible;
+}

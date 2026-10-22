@@ -245,6 +245,8 @@
     /* Tab menu */
     "tabMenuNewWindow": "Move Tab to New Window",
     "tabMenuReload": "Reload",
+    "tabMenuPin": "Pin Tab",
+    "tabMenuUnpin": "Unpin Tab",
     /* PDF Viewer */
     "PDFInvertPage": "Invert page colors",
     "PDFPageCounter": {

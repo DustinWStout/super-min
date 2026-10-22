@@ -792,3 +792,170 @@ body.toolbar-pushes-page #password-capture-bar {
 .dark-theme .has-thin-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--fill-strong);
 }
+
+/*
+Liquid Glass
+Translucent, blurred surfaces with a bright specular edge. CSS can't see the native page view, so while the
+toolbar floats over a page it blurs a picture of the page taken when it was revealed (#toolbar-backdrop).
+Everywhere else (address field, results, dialogs) the glass sits over UI content and uses backdrop-filter.
+*/
+
+body {
+  --glass-tint: rgba(252, 252, 254, 0.58);
+  --glass-tint-strong: rgba(252, 252, 254, 0.74);
+  --glass-blur: blur(28px) saturate(1.9);
+  --glass-edge:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.45),
+    inset 0 -0.5px 0 rgba(0, 0, 0, 0.06);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%);
+  --glass-pill: rgba(255, 255, 255, 0.72);
+  --glass-pill-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 1),
+    0 0 0 0.5px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode,
+body.dark-theme {
+  --glass-tint: rgba(34, 34, 38, 0.5);
+  --glass-tint-strong: rgba(34, 34, 38, 0.68);
+  --glass-edge:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.2),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.08),
+    inset 0 -0.5px 0 rgba(0, 0, 0, 0.3);
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 55%);
+  --glass-pill: rgba(255, 255, 255, 0.13);
+  --glass-pill-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 0.5px rgba(0, 0, 0, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* toolbar */
+
+#navbar.theme-background-color {
+  background: var(--glass-tint-strong) !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* over a page: the blurred picture of the page shows through a lighter tint */
+body.toolbar-overlay #navbar.theme-background-color {
+  background: var(--glass-tint) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+#toolbar-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  display: none;
+}
+
+body.toolbar-overlay #toolbar-backdrop {
+  display: block;
+}
+
+#toolbar-backdrop img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--bar-height) + 24px);
+  object-fit: cover;
+  object-position: top;
+}
+
+/* blurring with backdrop-filter keeps the picture lined up with the page and avoids soft edges */
+#toolbar-backdrop:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(18px) saturate(1.9);
+  backdrop-filter: blur(18px) saturate(1.9);
+}
+
+/* specular edge along the bottom of the floating toolbar */
+#navbar:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--glass-sheen);
+  box-shadow: inset 0 -0.5px 0 rgba(255, 255, 255, 0.35);
+  z-index: -1;
+}
+
+body.dark-mode #navbar:after,
+body.dark-theme #navbar:after {
+  box-shadow: inset 0 -0.5px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* tabs: the current tab is a raised glass capsule */
+
+.tab-item.active,
+.tab-item.active:not(:only-child),
+.dark-theme .tab-item.active:not(:only-child),
+.dark-theme.theme-background-low-contrast .tab-item.active:not(:only-child) {
+  background: var(--glass-pill);
+  box-shadow: var(--glass-pill-shadow);
+}
+
+.navbar-action-button:not(:disabled):active,
+#tab-editor .tab-editor-button:active {
+  transform: scale(0.94);
+}
+
+/* address field */
+
+#tab-editor {
+  background: var(--glass-pill);
+  box-shadow: var(--glass-pill-shadow);
+}
+
+/* results, find and dialogs float over the softened page as glass panels */
+
+#searchbar.theme-background-color,
+#findinpage-bar.theme-background-color,
+.modal {
+  background: var(--glass-sheen), linear-gradient(var(--glass-tint), var(--glass-tint)) !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+#searchbar,
+body:not(.is-ntp) #searchbar,
+body.ntp-has-background #searchbar,
+body.windows #searchbar,
+body.linux #searchbar,
+#findinpage-bar,
+.modal {
+  box-shadow: var(--glass-edge), var(--panel-shadow);
+}
+
+#searchbar .searchbar-item:focus,
+#searchbar .searchbar-item.fakefocus {
+  background: var(--glass-pill);
+  box-shadow: var(--glass-pill-shadow);
+}
+
+.searchbar-shortcut,
+.searchbar-floating-button,
+.searchbar-item .text-action-button-row button {
+  background: var(--glass-pill);
+  box-shadow: var(--glass-pill-shadow);
+}
+
+/* downloads */
+
+#download-bar,
+.dark-mode #download-bar {
+  background: var(--glass-tint-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.3);
+}

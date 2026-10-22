@@ -10,6 +10,7 @@ The toolbar is either:
 const webviews = require('webviews.js')
 
 const navbar = document.getElementById('navbar')
+const backdropImage = document.querySelector('#toolbar-backdrop img')
 const findBar = document.getElementById('findinpage-bar')
 
 // how far below the toolbar the mouse can go before the toolbar hides
@@ -18,9 +19,14 @@ const hideDistance = 24
 const leaveWindowDelay = 650
 // should match the transition duration of #navbar
 const hideAnimationDuration = 180
+// how long to wait for the picture of the page behind the toolbar
+const maxBackdropWait = 90
+// extra height captured below the toolbar so the blur has something to spread into
+const backdropOverscan = 24
 
 const toolbarReveal = {
   peeking: false,
+  revealPending: false,
   shown: false,
   overlay: false,
   mouseInWindow: false,
@@ -99,10 +105,41 @@ const toolbarReveal = {
   },
   reveal: function () {
     clearTimeout(toolbarReveal.leaveTimeout)
-    if (!toolbarReveal.peeking) {
+    if (toolbarReveal.peeking || toolbarReveal.revealPending) {
+      return
+    }
+
+    const show = function () {
+      toolbarReveal.revealPending = false
       toolbarReveal.peeking = true
       toolbarReveal.update()
     }
+
+    if (!toolbarReveal.hasVisiblePage() || toolbarReveal.isDocked()) {
+      show()
+      return
+    }
+
+    // take a picture of the top of the page to show through the glass, but don't hold the toolbar back for long
+    toolbarReveal.revealPending = true
+    const timeout = new Promise(resolve => setTimeout(resolve, maxBackdropWait, null))
+    const capture = ipc.invoke('captureToolbarBackdrop', {
+      id: webviews.selectedId,
+      height: navbar.offsetHeight + backdropOverscan
+    }).catch(() => null)
+
+    Promise.race([capture, timeout]).then(function (src) {
+      if (!src) {
+        backdropImage.hidden = true
+        show()
+        return
+      }
+      backdropImage.src = src
+      backdropImage.decode().catch(() => {}).then(function () {
+        backdropImage.hidden = false
+        show()
+      })
+    })
   },
   conceal: function () {
     clearTimeout(toolbarReveal.leaveTimeout)

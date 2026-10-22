@@ -11,7 +11,7 @@ const textColorNN = require('ext/textColor/textColor.js')
 const defaultColors = {
   private: ['rgb(58, 44, 99)', 'white'],
   lightMode: ['rgb(250, 250, 251)', 'rgb(29, 29, 31)'],
-  darkMode: ['rgb(30, 30, 33)', 'rgb(242, 242, 244)']
+  darkMode: ['rgb(30, 30, 33)', 'white']
 }
 
 function getHours () {

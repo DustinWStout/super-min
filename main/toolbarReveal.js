@@ -74,3 +74,18 @@ setInterval(function () {
     windowData.state.cursorInToolbarEdge = inEdge
   })
 }, toolbarRevealPollInterval)
+
+// a picture of the top of the page, which the UI blurs behind the toolbar so that it looks like glass
+ipc.handle('captureToolbarBackdrop', async function (e, data) {
+  const view = getView(data.id)
+  if (!view) {
+    return null
+  }
+  const bounds = view.getBounds()
+  const img = await view.webContents.capturePage({ x: 0, y: 0, width: bounds.width, height: Math.min(data.height, bounds.height) })
+  if (img.isEmpty()) {
+    return null
+  }
+  // it will be blurred heavily, so a small image is enough
+  return 'data:image/jpeg;base64,' + img.resize({ width: Math.round(bounds.width / 3) }).toJPEG(70).toString('base64')
+})
